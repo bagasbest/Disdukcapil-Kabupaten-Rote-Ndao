@@ -4,7 +4,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
+import android.os.Build;
 import android.os.Bundle;
+import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -25,11 +27,24 @@ public class WebViewActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         WebSettings webSettings = binding.webView.getSettings();
-        webSettings.setDomStorageEnabled(true);
         webSettings.setJavaScriptEnabled(true);
+        webSettings.setAllowContentAccess(true);
+        webSettings.setDomStorageEnabled(true);
+        webSettings.setLoadsImagesAutomatically(true);
+
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            webSettings.setMixedContentMode(0);
+            binding.webView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            binding.webView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+        } else {
+            binding.webView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+        }
 
         ProgressDialog progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Silahkan tunggu...");
+        progressDialog.setCancelable(false);
         progressDialog.show();
 
         binding.webView.setWebViewClient(new Callback());
@@ -53,7 +68,7 @@ public class WebViewActivity extends AppCompatActivity {
 
             }
         });
-        binding.webView.loadUrl("https://capil-rotendao-fe.vercel.app");
+        binding.webView.loadUrl("https://taring-dukcapil-rotendao.tipa.co.id");
 
     }
 
@@ -67,7 +82,7 @@ public class WebViewActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if(binding.webView.canGoBack()) {
+        if (binding.webView.canGoBack()) {
             binding.webView.goBack();
         } else {
             super.onBackPressed();
